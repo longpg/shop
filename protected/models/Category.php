@@ -48,7 +48,7 @@ class Category extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'tblMaps' => array(self::HAS_MANY, 'Map', 'category_id'),
+			'maps' => array(self::HAS_MANY, 'Map', 'category_id'),
 		);
 	}
 
