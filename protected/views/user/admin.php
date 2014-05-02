@@ -49,7 +49,11 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'username',
 		'password',
 		'email',
-		'role',
+		array(
+            'header'=>'Role',
+            'value'=>'($data->role==1)?"Admin":($data->role==0?"User":"")',
+            'filter'=>Chtml::dropDownList('User[role]',$model->role, $model->roleOption()),
+        ),
 		array(
 			'class'=>'CButtonColumn',
 		),

@@ -28,7 +28,7 @@ class User extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('username, password, email', 'required'),
+			array('username, password, email, role', 'required'),
 			array('role', 'numerical', 'integerOnly'=>true),
 			array('username, password, email', 'length', 'max'=>128),
 			// The following rule is used by search().
@@ -101,4 +101,14 @@ class User extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+    public function roleLabel()
+    {
+        return $this->role==1?'Admin':($this->role==0?'User':'');
+    }
+
+    public function roleOption()
+    {
+        return array(null=>'',0=>'User',1=>'Admin');
+    }
 }

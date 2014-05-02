@@ -25,6 +25,9 @@ $this->menu=array(
 		'username',
 		'password',
 		'email',
-		'role',
+		array(
+            'label'=>'Role',
+            'value'=>$model->roleLabel(),
+        ),
 	),
 )); ?>
