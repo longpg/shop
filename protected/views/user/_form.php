@@ -39,7 +39,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'role'); ?>
-		<?php echo $form->textField($model,'role',array('size'=>32,'maxlength'=>32)); ?>
+		<?php echo $form->textField($model,'role'); ?>
 		<?php echo $form->error($model,'role'); ?>
 	</div>
 

@@ -28,7 +28,7 @@
 
 	<div class="row">
 		<?php echo $form->label($model,'role'); ?>
-		<?php echo $form->textField($model,'role',array('size'=>32,'maxlength'=>32)); ?>
+		<?php echo $form->textField($model,'role'); ?>
 	</div>
 
 	<div class="row buttons">
