@@ -17,7 +17,7 @@ $this->menu=array(
 ?>
 
 <h1>View Product #<?php echo $model->id; ?></h1>
-
+<div class="info" style="float: left;width: 500px;">
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
@@ -31,3 +31,9 @@ $this->menu=array(
 		'qty',
 	),
 )); ?>
+</div>
+<?php if(!empty($model->image) && is_file(Yii::getPathOfAlias('webroot.images.upload.product').'/'.$model->image)):?>
+<div class="image" style="float: right;">
+    <img width="200" alt="image_<?php echo $model->name ?>" src="<?php echo Yii::app()->request->baseUrl ?>/images/upload/product/<?php echo $model->image ?>" />
+</div>
+<?php endif;?>

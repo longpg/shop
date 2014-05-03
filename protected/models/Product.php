@@ -37,10 +37,15 @@ class Product extends CActiveRecord
 			array('name, price, qty', 'required'),
 			array('qty', 'numerical', 'integerOnly'=>true),
 			array('price', 'numerical'),
-			array('name, description, image, manufacture', 'length', 'max'=>255),
+			array('name, description, manufacture', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, description, price, image, manufacture, created_at, qty', 'safe', 'on'=>'search'),
+			array('id, name, description, price, manufacture, created_at, qty', 'safe', 'on'=>'search'),
+            array('image', 'file', 'allowEmpty' => true,
+                'maxSize' => 409600,
+                'types' => 'jpg, jpeg, png',
+                'tooLarge' => 'The image cannot be larger than 400KB.',
+                'wrongType' => 'The image must be a JPG or PNG.'),
 		);
 	}
 
@@ -95,7 +100,6 @@ class Product extends CActiveRecord
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('price',$this->price);
-		$criteria->compare('image',$this->image,true);
 		$criteria->compare('manufacture',$this->manufacture,true);
 		$criteria->compare('created_at',$this->created_at,true);
 		$criteria->compare('qty',$this->qty);

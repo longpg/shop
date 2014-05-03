@@ -17,11 +17,13 @@ class UserIdentity extends CUserIdentity
 	 */
 	public function authenticate()
 	{
-		$users=array(
-			// username => password
-			'demo'=>'demo',
-			'admin'=>'admin',
-		);
+        $criteria = new CDbCriteria();
+        $criteria->select = 'username, password';
+        $userCollection = User::model()->findAll($criteria);
+        $users=array();
+        foreach($userCollection as $user) {
+            $users[$user->username] = $user->password;
+        }
 		if(!isset($users[$this->username]))
 			$this->errorCode=self::ERROR_USERNAME_INVALID;
 		elseif($users[$this->username]!==$this->password)

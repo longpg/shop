@@ -31,13 +31,9 @@ class ProductController extends Controller
 				'actions'=>array('index','view'),
 				'users'=>array('*'),
 			),
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
-				'users'=>array('@'),
-			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
+				'actions'=>array('create','update','admin','delete'),
+				'users'=>$this->adminList(),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -70,8 +66,21 @@ class ProductController extends Controller
 		if(isset($_POST['Product']))
 		{
 			$model->attributes=$_POST['Product'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+            if($model->save()){
+                $upload=CUploadedFile::getInstance($model,'image');
+                if($upload !== null){
+                    $imgName = preg_replace('/[^a-z0-9]/ui','-' , $model->name);
+                    $uploadDir = Yii::getPathOfAlias('webroot.images.upload');
+                    $dest = Yii::getPathOfAlias('webroot.images.upload.product');
+                    if (!is_dir($uploadDir)) mkdir($uploadDir);
+                    if (!is_dir($dest)) mkdir($dest);
+                    $ext=strtolower($upload->extensionName);
+                    $model->image=$model->id . '_' . $imgName . '.' . $ext;
+                    $upload->saveAs($dest . '/' .$model->image);
+                    $model->save();
+                }
+                $this->redirect(array('view','id'=>$model->id));
+            }
 		}
 
 		$this->render('create',array(
@@ -94,8 +103,19 @@ class ProductController extends Controller
 		if(isset($_POST['Product']))
 		{
 			$model->attributes=$_POST['Product'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+            $upload=CUploadedFile::getInstance($model,'image');
+            if($upload !== null){
+                $imgName = preg_replace('/[^a-z0-9]/ui','-' , $model->name);
+                $uploadDir = Yii::getPathOfAlias('webroot.images.upload');
+                $dest = Yii::getPathOfAlias('webroot.images.upload.product');
+                if (!is_dir($uploadDir)) mkdir($uploadDir);
+                if (!is_dir($dest)) mkdir($dest);
+                $ext=strtolower($upload->extensionName);
+                $model->image=$model->id . '_' . $imgName . '.' . $ext;
+                $upload->saveAs($dest . '/' .$model->image);
+            }
+            if($model->save())
+                $this->redirect(array('view','id'=>$model->id));
 		}
 
 		$this->render('update',array(
