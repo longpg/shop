@@ -33,10 +33,15 @@ class Category extends CActiveRecord
 		return array(
 			array('name, parent_id', 'required'),
 			array('parent_id', 'numerical', 'integerOnly'=>true),
-			array('name, image, description', 'length', 'max'=>255),
+			array('name, description', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, image, description, parent_id', 'safe', 'on'=>'search'),
+			array('id, name, description, parent_id', 'safe', 'on'=>'search'),
+            array('image', 'file', 'allowEmpty' => true,
+                'maxSize' => 409600,
+                'types' => 'jpg, jpeg, png',
+                'tooLarge' => 'The image cannot be larger than 400KB.',
+                'wrongType' => 'The image must be a JPG or PNG.'),
 		);
 	}
 
@@ -86,7 +91,6 @@ class Category extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('image',$this->image,true);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('parent_id',$this->parent_id);
 

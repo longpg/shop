@@ -10,6 +10,7 @@ $this->breadcrumbs=array(
 $this->menu=array(
 	array('label'=>'List Category', 'url'=>array('index')),
 	array('label'=>'Create Category', 'url'=>array('create')),
+    array('label'=>'View Category as Tree', 'url'=>array('treeview')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -47,7 +48,6 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'columns'=>array(
 		'id',
 		'name',
-		'image',
 		'description',
 		'parent_id',
 		array(

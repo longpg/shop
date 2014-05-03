@@ -13,6 +13,7 @@ $this->menu=array(
 	array('label'=>'Create Category', 'url'=>array('create')),
 	array('label'=>'View Category', 'url'=>array('view', 'id'=>$model->id)),
 	array('label'=>'Manage Category', 'url'=>array('admin')),
+    array('label'=>'View Category as Tree', 'url'=>array('treeview')),
 );
 ?>
 

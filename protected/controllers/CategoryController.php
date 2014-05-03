@@ -28,7 +28,7 @@ class CategoryController extends Controller
 	{
         return array(
             array('allow',  // allow all users to perform 'index' and 'view' actions
-                'actions'=>array('index','view'),
+                'actions'=>array('index','view','treeview'),
                 'users'=>array('*'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -66,8 +66,21 @@ class CategoryController extends Controller
 		if(isset($_POST['Category']))
 		{
 			$model->attributes=$_POST['Category'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+			if($model->save()){
+                $upload=CUploadedFile::getInstance($model,'image');
+                if($upload !== null){
+                    $imgName = preg_replace('/[^a-z0-9]/ui','-' , $model->name);
+                    $uploadDir = Yii::getPathOfAlias('webroot.images.upload');
+                    $dest = Yii::getPathOfAlias('webroot.images.upload.category');
+                    if (!is_dir($uploadDir)) mkdir($uploadDir);
+                    if (!is_dir($dest)) mkdir($dest);
+                    $ext=strtolower($upload->extensionName);
+                    $model->image=$model->id . '_' . $imgName . '.' . $ext;
+                    $upload->saveAs($dest . '/' .$model->image);
+                    $model->save();
+                }
+                $this->redirect(array('view','id'=>$model->id));
+            }
 		}
 
 		$this->render('create',array(
@@ -90,6 +103,17 @@ class CategoryController extends Controller
 		if(isset($_POST['Category']))
 		{
 			$model->attributes=$_POST['Category'];
+            $upload=CUploadedFile::getInstance($model,'image');
+            if($upload !== null){
+                $imgName = preg_replace('/[^a-z0-9]/ui','-' , $model->name);
+                $uploadDir = Yii::getPathOfAlias('webroot.images.upload');
+                $dest = Yii::getPathOfAlias('webroot.images.upload.category');
+                if (!is_dir($uploadDir)) mkdir($uploadDir);
+                if (!is_dir($dest)) mkdir($dest);
+                $ext=strtolower($upload->extensionName);
+                $model->image=$model->id . '_' . $imgName . '.' . $ext;
+                $upload->saveAs($dest . '/' .$model->image);
+            }
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -138,6 +162,45 @@ class CategoryController extends Controller
 			'model'=>$model,
 		));
 	}
+
+    /**
+     * Display all categories as tree
+     */
+    public function actionTreeview()
+    {
+        $categories=Category::model()->findAll();
+        $this->render('treeview',array(
+            'collection'=>$categories,
+        ));
+    }
+
+    public function renderLinks($categories, $parent_id)
+    {
+        $categoryList = $this->getChildCategories($categories,$parent_id);
+        if($categoryList) {
+            echo "<ul>";
+            foreach($categoryList as $category){
+                echo "<li>";
+                echo CHtml::link($category->name,$this->createUrl('view',array('id'=>$category->id)));
+                $this->renderLinks($categories, $category->id);
+                echo "</li>";
+            }
+            echo "</ul>";
+        }
+    }
+
+    public function getChildCategories($categories, $parent_id)
+    {
+        $result=array();
+        foreach($categories as $category){
+            if($category->parent_id==$parent_id){
+                $result[]=$category;
+            }
+        }
+        if(count($result)){
+            return $result;
+        }else return false;
+    }
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
