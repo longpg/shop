@@ -3,11 +3,10 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: May 04, 2014 at 11:08 AM
+-- Generation Time: May 06, 2014 at 02:22 PM
 -- Server version: 5.5.27
 -- PHP Version: 5.4.7
 
-SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -35,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `tbl_category` (
   `description` varchar(255) DEFAULT NULL,
   `parent_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
 
 --
 -- Dumping data for table `tbl_category`
@@ -47,7 +46,8 @@ INSERT INTO `tbl_category` (`id`, `name`, `image`, `description`, `parent_id`) V
 (3, 'Sony', NULL, 'Sony Smartphone', 1),
 (4, 'Samsung', NULL, 'Samsung galaxy smartphone', 1),
 (5, 'X-PeriaZ', NULL, 'Sony X-Peria', 3),
-(6, 'X-Peria Z1', NULL, 'Sony X-Peria Z 1', 5);
+(6, 'X-Peria Z1', NULL, 'Sony X-Peria Z 1', 5),
+(7, 'Dog', '7_Dog.jpg', 'Dog category', 0);
 
 -- --------------------------------------------------------
 
@@ -64,7 +64,17 @@ CREATE TABLE IF NOT EXISTS `tbl_map` (
   KEY `product_id` (`product_id`,`category_id`),
   KEY `product_id_2` (`product_id`),
   KEY `category_id` (`category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+--
+-- Dumping data for table `tbl_map`
+--
+
+INSERT INTO `tbl_map` (`id`, `product_id`, `category_id`) VALUES
+(1, 1, 1),
+(4, 1, 1),
+(2, 1, 2),
+(3, 1, 6);
 
 -- --------------------------------------------------------
 
@@ -149,7 +159,6 @@ INSERT INTO `tbl_user` (`id`, `username`, `password`, `email`, `role`) VALUES
 ALTER TABLE `tbl_map`
   ADD CONSTRAINT `tbl_map_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `tbl_product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `tbl_map_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `tbl_category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-SET FOREIGN_KEY_CHECKS=1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

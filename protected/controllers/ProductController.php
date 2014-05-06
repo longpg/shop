@@ -116,12 +116,39 @@ class ProductController extends Controller
                 $model->image=$model->id . '_' . $imgName . '.' . $ext;
                 $upload->saveAs($dest . '/' .$model->image);
             }
-            if($model->save())
+
+            $categorySaver = true;
+            if(isset($_POST['categories'])){
+                $cateList = explode(',', $_POST['categories']);
+                foreach ($cateList as $cateId) {
+                    $map = new Map;
+                    $map->product_id=$id;
+                    $map->category_id=$cateId;
+                    if(!($map->save())){
+                        $categorySaver = false;
+                        break;
+                    }
+                }
+            }
+
+            if($model->save() && $categorySaver)
                 $this->redirect(array('view','id'=>$model->id));
 		}
 
+        $criteria=new CDbCriteria;
+        $criteria->select='category_id';
+        $criteria->condition='product_id=:id';
+        $criteria->params=array(':id'=>$id);
+        $categories = Map::model()->findAll($criteria);
+        $cateIds = array();
+        foreach ($categories as $cate) {
+            if (!in_array($cate->category_id, $cateIds))
+                $cateIds[] = $cate->category_id;
+        }
+
 		$this->render('update',array(
 			'model'=>$model,
+            'categories'=>$cateIds,
 		));
 	}
 

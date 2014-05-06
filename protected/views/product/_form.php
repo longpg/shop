@@ -14,7 +14,19 @@
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
     'htmlOptions'=>array('enctype'=>'multipart/form-data'),
-)); ?>
+));
+
+Yii::app()->clientScript->registerScript('category-checkboxes', "
+var categoriesArr=new Array();
+$('.category-checkboxes input[type=\"checkbox\"]').change(function(){
+    categoriesArr=new Array();
+    $('.category-checkboxes input[type=\"checkbox\"]:checked').each(function(i, el) {
+        var id=$(el).attr('id').split('_')[1];
+        categoriesArr.push(id);
+    });
+    $('#categories').val(categoriesArr.join());
+});
+"); ?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
@@ -64,7 +76,14 @@
 		<?php echo $form->error($model,'qty'); ?>
 	</div>
 
-	<div class="row buttons">
+    <div class="row category-checkboxes">
+        <label>Product Categories</label>
+        <input type="hidden" name="categories" id="categories"<?php if($categories && is_array($categories) && count($categories)): ?> value="<?php echo implode(',',$categories) ?>"<?php endif;?> />
+        <?php Yii::import('application.controllers.CategoryController'); ?>
+        <?php CategoryController::renderCheckboxes(Category::model()->findAll(),$model->isNewRecord?array():$categories,0) ?>
+    </div>
+
+    <div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
 

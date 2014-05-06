@@ -191,7 +191,23 @@ class CategoryController extends Controller
         }
     }
 
-    public function getChildCategories($categories, $parent_id)
+    public static function renderCheckboxes($categories, $checkedList, $parent_id)
+    {
+        $categoryList = self::getChildCategories($categories,$parent_id);
+        if($categoryList) {
+            echo "<ul>";
+            foreach($categoryList as $category){
+                echo "<li>";
+                echo CHtml::checkbox('category_'.$category->id, in_array($category->id, $checkedList)?true:false, array('id'=>"category_{$category->id}"));
+                echo CHtml::label($category->name, 'category_'.$category->id);
+                self::renderCheckboxes($categories, $checkedList, $category->id);
+                echo "</li>";
+            }
+            echo "</ul>";
+        }
+    }
+
+    public static function getChildCategories($categories, $parent_id)
     {
         $result=array();
         foreach($categories as $category){

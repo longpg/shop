@@ -236,3 +236,6 @@ hr.space {background:#fff;color:#fff;visibility:hidden;}
 .clearfix:after, .container:after {content:"\0020";display:block;height:0;clear:both;visibility:hidden;overflow:hidden;}
 .clearfix, .container {display:block;}
 .clear {clear:both;}
+.category-checkboxes ul{list-style: none;}
+.category-checkboxes > ul{padding-left: 0;}
+.category-checkboxes li > label{display: inline-block !important; font-weight: normal !important;}
