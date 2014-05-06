@@ -78,7 +78,7 @@ $('.category-checkboxes input[type=\"checkbox\"]').change(function(){
 
     <div class="row category-checkboxes">
         <label>Product Categories</label>
-        <input type="hidden" name="categories" id="categories"<?php if($categories && is_array($categories) && count($categories)): ?> value="<?php echo implode(',',$categories) ?>"<?php endif;?> />
+        <input type="hidden" name="categories" id="categories"<?php if(!$model->isNewRecord && is_array($categories)): ?> value="<?php echo implode(',',$categories) ?>"<?php endif;?> />
         <?php Yii::import('application.controllers.CategoryController'); ?>
         <?php CategoryController::renderCheckboxes(Category::model()->findAll(),$model->isNewRecord?array():$categories,0) ?>
     </div>

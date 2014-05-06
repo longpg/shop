@@ -81,6 +81,19 @@ class ProductController extends Controller
                     $upload->saveAs($dest . '/' .$model->image);
                     $model->save();
                 }
+
+                if(isset($_POST['categories']) && $model->id){
+                    $cateList=explode(',',$_POST['categories']);
+                    $cateList=array_unique($cateList);
+                    $insertRows=array();
+                    foreach($cateList as $cateId){
+                        $insertRows[]="({$model->id},{$cateId})";
+                    }
+                    $insertValues=implode(',',$insertRows);
+                    $insertSql="INSERT INTO tbl_map (product_id,category_id) VALUES {$insertValues}";
+                    Yii::app()->db->createCommand($insertSql)->execute();
+                }
+
                 $this->redirect(array('view','id'=>$model->id));
             }
 		}
@@ -98,6 +111,7 @@ class ProductController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+        $cateIds=$this->getMappedCategories($id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -119,14 +133,24 @@ class ProductController extends Controller
 
             $categorySaver = true;
             if(isset($_POST['categories'])){
-                $cateList = explode(',', $_POST['categories']);
+                $cateList=explode(',',$_POST['categories']);
+                $cateList=array_unique($cateList);
                 foreach ($cateList as $cateId) {
-                    $map = new Map;
-                    $map->product_id=$id;
-                    $map->category_id=$cateId;
-                    if(!($map->save())){
-                        $categorySaver = false;
-                        break;
+                    if (!in_array($cateId, $cateIds)) {
+                        $map=new Map;
+                        $map->product_id=$id;
+                        $map->category_id=$cateId;
+                        if(!($map->save())){
+                            $categorySaver = false;
+                            break;
+                        }
+                    }
+                }
+
+                foreach($cateIds as $cateId){
+                    if(!in_array($cateId, $cateList)){
+                        Map::model()->deleteAll('product_id=:pid AND category_id=:cid',
+                            array(':pid'=>$id,':cid'=>$cateId));
                     }
                 }
             }
@@ -134,17 +158,6 @@ class ProductController extends Controller
             if($model->save() && $categorySaver)
                 $this->redirect(array('view','id'=>$model->id));
 		}
-
-        $criteria=new CDbCriteria;
-        $criteria->select='category_id';
-        $criteria->condition='product_id=:id';
-        $criteria->params=array(':id'=>$id);
-        $categories = Map::model()->findAll($criteria);
-        $cateIds = array();
-        foreach ($categories as $cate) {
-            if (!in_array($cate->category_id, $cateIds))
-                $cateIds[] = $cate->category_id;
-        }
 
 		$this->render('update',array(
 			'model'=>$model,
@@ -219,4 +232,14 @@ class ProductController extends Controller
 			Yii::app()->end();
 		}
 	}
+
+    public function getMappedCategories($id)
+    {
+        $command=Yii::app()->db->createCommand();
+        $command->select('category_id');
+        $command->from('tbl_Map');
+        $command->where('product_id=:id',array(':id'=>$id));
+        $cateIds=$command->queryColumn();
+        return array_unique($cateIds);
+    }
 }
