@@ -70,8 +70,10 @@ class CategoryController extends Controller
                 $upload=CUploadedFile::getInstance($model,'image');
                 if($upload !== null){
                     $imgName = preg_replace('/[^a-z0-9]/ui','-' , $model->name);
+                    $imgDir = Yii::getPathOfAlias('webroot.images');
                     $uploadDir = Yii::getPathOfAlias('webroot.images.upload');
                     $dest = Yii::getPathOfAlias('webroot.images.upload.category');
+                    if (!is_dir($imgDir)) mkdir($imgDir);
                     if (!is_dir($uploadDir)) mkdir($uploadDir);
                     if (!is_dir($dest)) mkdir($dest);
                     $ext=strtolower($upload->extensionName);
