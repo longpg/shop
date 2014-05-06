@@ -17,18 +17,11 @@ class UserIdentity extends CUserIdentity
 	 */
 	public function authenticate()
 	{
-        $criteria = new CDbCriteria();
-        $criteria->select = 'username, password';
-        $userCollection = User::model()->findAll($criteria);
-        $users=array();
-        foreach($userCollection as $user) {
-            $users[$user->username] = $user->password;
-        }
-		if(!isset($users[$this->username]))
-			$this->errorCode=self::ERROR_USERNAME_INVALID;
-		elseif($users[$this->username]!==$this->password)
-			$this->errorCode=self::ERROR_PASSWORD_INVALID;
-		else
+        $userData=Yii::app()->db->createCommand("
+            SELECT CONCAT_WS(' ',username,password) FROM tbl_user
+        ")->queryColumn();
+        $compareString=$this->username." ".md5($this->password);
+        if(in_array($compareString,$userData))
 			$this->errorCode=self::ERROR_NONE;
 		return !$this->errorCode;
 	}
